@@ -4,6 +4,7 @@ import com.iangerolamo.autenticacao.autorizacao.com.token.jwt.exceptions.RegraNe
 import com.iangerolamo.autenticacao.autorizacao.com.token.jwt.models.Cliente;
 import com.iangerolamo.autenticacao.autorizacao.com.token.jwt.repositories.ClienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,6 +16,9 @@ public class ClienteService {
 
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder pe;
 
     public List<Cliente> consultarTodos() {
         return clienteRepository.findAll();
@@ -40,6 +44,7 @@ public class ClienteService {
         Cliente cliente = consultarPorId(id);
         cliente.setNome(clienteAtualizado.getNome());
         cliente.setEmail(clienteAtualizado.getEmail());
+        cliente.setSenha(clienteAtualizado.getSenha());
     }
 
     public void deletar(Integer id) {
@@ -57,6 +62,10 @@ public class ClienteService {
 
         if (cliente.getEmail() == null || cliente.getEmail().isBlank()) {
             throw new RegraNegocioException("O campo e-mail não pode estar vazio");
+        }
+
+        if (cliente.getSenha() == null || cliente.getSenha().isBlank()) {
+            throw new RegraNegocioException("O campo senha não pode estar vazio");
         }
     }
 
